@@ -1,43 +1,43 @@
 import { Button, Link } from '@nextui-org/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { useLazyCurrentQuery, useLoginMutation } from '../app/services/userApi';
+import { useRegisterMutation } from '../app/services/userApi';
 import { ErrorMessage } from '../components/error-message';
 import { Input } from '../components/input';
 import { hasErrorField } from '../utils/has-error-field';
 
-type Login = {
+type Register = {
 	email: string;
 	password: string;
+	name: string;
 };
 
 type Props = {
 	setSelected: (value: string) => void;
 };
 
-export const Login: React.FC<Props> = ({ setSelected }) => {
+export const Register: React.FC<Props> = ({ setSelected }) => {
 	const {
 		handleSubmit,
 		control,
 		formState: { errors },
-	} = useForm<Login>({
+	} = useForm<Register>({
 		mode: 'onChange',
 		reValidateMode: 'onBlur',
 		defaultValues: {
 			email: '',
 			password: '',
+			name: '',
 		},
 	});
 
-	const [login, { isLoading }] = useLoginMutation();
-	const navigate = useNavigate();
+	const [register, { isLoading }] = useRegisterMutation();
 	const [error, setError] = React.useState('');
-	const [triggerCurrentCuery] = useLazyCurrentQuery();
 
-	const onSubmit = async (data: Login) => {
+	const onSubmit = async (data: Register) => {
 		try {
-			await login(data).unwrap();
+			await register(data).unwrap();
+			setSelected('login');
 		} catch (error) {
 			if (hasErrorField(error)) {
 				setError(error.data.error);
@@ -47,6 +47,13 @@ export const Login: React.FC<Props> = ({ setSelected }) => {
 
 	return (
 		<form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
+			<Input
+				name='name'
+				control={control}
+				label='Имя'
+				type='text'
+				required='Обязательное поле'
+			/>
 			<Input
 				name='email'
 				control={control}
@@ -63,18 +70,18 @@ export const Login: React.FC<Props> = ({ setSelected }) => {
 			/>
 			<ErrorMessage error={error} />
 			<p className='text-center text-small'>
-				Нет аккаунта?{' '}
+				Уже есть аккаунт?{' '}
 				<Link
 					size='sm'
 					className='cursor-pointer'
-					onPress={() => setSelected('sign-up')}
+					onPress={() => setSelected('login')}
 				>
-					Зарегистрироваться
+					Войти
 				</Link>
 			</p>
 			<div className='flex gap-2 justify-end'>
 				<Button fullWidth color='primary' type='submit' isLoading={isLoading}>
-					Войти
+					Зарегистрироваться
 				</Button>
 			</div>
 		</form>
