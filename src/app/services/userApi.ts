@@ -52,6 +52,8 @@ export const {
 	useCurrentQuery,
 	useGetUserByIdQuery,
 	useUpdateUserMutation,
+	useLazyCurrentQuery,
+	useLazyGetUserByIdQuery,
 } = userApi;
 
 export const {
