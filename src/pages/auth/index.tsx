@@ -1,7 +1,7 @@
 import { Card, CardBody, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
-import { Login } from '../../features/login';
-import { Register } from '../../features/register';
+import { Login } from '../../features/user/login';
+import { Register } from '../../features/user/register';
 
 export const Auth = () => {
 	const [selected, setSelected] = React.useState('login');

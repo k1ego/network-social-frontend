@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { store } from './app/store';
 import { Layout } from './components/layout';
 import { ThemeProvider } from './components/theme-provider';
+import { AuthGuard } from './features/user/authGuard';
 import './index.css';
 import { Auth } from './pages/auth';
 import { CurrentPost } from './pages/current-post';
@@ -57,7 +58,9 @@ if (container) {
 			<Provider store={store}>
 				<NextUIProvider>
 					<ThemeProvider>
-						<RouterProvider router={router} />
+						<AuthGuard>
+							<RouterProvider router={router} />
+						</AuthGuard>
 					</ThemeProvider>
 				</NextUIProvider>
 			</Provider>
