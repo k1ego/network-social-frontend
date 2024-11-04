@@ -32,7 +32,7 @@ export const userApi = api.injectEndpoints({
 		}),
 		getUserById: builder.query<User, string>({
 			query: id => ({
-				url: `/user/${id}`,
+				url: `/users/${id}`,
 				method: 'GET',
 			}),
 		}),
