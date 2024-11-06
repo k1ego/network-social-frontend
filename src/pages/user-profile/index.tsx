@@ -22,6 +22,7 @@ import { ProfileInfo } from '../../components/profile-info';
 import { BASE_URL } from '../../constants';
 import { resetUser, selectCurrentUser } from '../../features/user/userSlice';
 import { formatToClientDate } from '../../utils/format-to-client-date';
+import { EditProfile } from '../../components/edit-profile';
 
 export const UserProfile = () => {
 	const { id } = useParams<{ id: string }>();
@@ -48,10 +49,24 @@ export const UserProfile = () => {
 				await triggerGetUserByIdQuery(id).unwrap();
 				await triggerCurrentQuery().unwrap();
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	if (!data) return null;
+
+	const handleClose = async () => {
+		try {
+			if (id) {
+				await triggerGetUserByIdQuery(id).unwrap();
+				await triggerCurrentQuery().unwrap();
+				onClose();
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
 	return (
 		<>
@@ -84,7 +99,7 @@ export const UserProfile = () => {
 								{data.isFollowing ? 'Отписаться' : 'Подписаться'}
 							</Button>
 						) : (
-							<Button endContent={<CiEdit />}>Редактировать</Button>
+							<Button endContent={<CiEdit />} onClick={() => onOpen()}>Редактировать</Button>
 						)}
 					</div>
 				</Card>
@@ -103,6 +118,7 @@ export const UserProfile = () => {
 					</div>
 				</Card>
 			</div>
+			<EditProfile isOpen={isOpen} onClose={handleClose} user={data} />
 		</>
 	);
 };
