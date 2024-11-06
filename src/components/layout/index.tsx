@@ -17,6 +17,7 @@ export const Layout = () => {
 			navigate('/auth');
 		}
 	}, [])
+	console.log(user)
 	return (
 		<>
 			<Header />

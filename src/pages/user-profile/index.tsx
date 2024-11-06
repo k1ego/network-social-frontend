@@ -35,7 +35,7 @@ export const UserProfile = () => {
 	const [triggerCurrentQuery] = useLazyCurrentQuery();
 	const dispatch = useDispatch();
 
-	useEffect(() => {
+	useEffect(() => () => {
 		dispatch(resetUser());
 	}, []);
 
@@ -104,13 +104,13 @@ export const UserProfile = () => {
 					</div>
 				</Card>
 				<Card className='flex flex-col space-y-4 p-5 flex-1'>
-					<ProfileInfo title='Почта' info={data.email} />
-					<ProfileInfo title='Местоположение' info={data.location} />
+					<ProfileInfo title='Почта:' info={data.email} />
+					<ProfileInfo title='Местоположение:' info={data.location} />
 					<ProfileInfo
-						title='Дата рождения'
-						info={formatToClientDate(data.dateOfBirth?.toISOString())}
+						title='Дата рождения:'
+						info={formatToClientDate(data.dateOfBirth)}
 					/>
-					<ProfileInfo title='Обо мне' info={data.bio} />
+					<ProfileInfo title='Обо мне:' info={data.bio} />
 
 					<div className='flex gap-2'>
 						<CountInfo count={data.followers.length} title='Подписчики' />

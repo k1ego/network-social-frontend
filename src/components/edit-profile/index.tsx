@@ -110,7 +110,7 @@ export const EditProfile: React.FC<Props> = ({ isOpen, onClose, user }) => {
 								/>
 								<Input
 									control={control}
-									name='dateofBirth'
+									name='dateOfBirth'
 									label='Дата рождения'
 									type='date'
 									placeholder='Выберите дату рождения'
