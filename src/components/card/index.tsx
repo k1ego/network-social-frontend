@@ -144,7 +144,7 @@ export const Card: React.FC<Props> = ({
 						className='text-small font-semibold leading-non text-default-600'
 						avatarUrl={avatarUrl}
 						description={
-							createdAt && formatToClientDate(createdAt.toLocaleString())
+							createdAt && formatToClientDate(createdAt)
 						}
 					/>
 				</Link>
