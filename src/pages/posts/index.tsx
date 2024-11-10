@@ -1,5 +1,5 @@
 import { useGetAllPostsQuery } from '../../app/services/postsApi';
-import { Card } from '../../components/card';
+import { Cards } from '../../components/card';
 import { CreatePost } from '../../components/create-post';
 
 export const Posts = () => {
@@ -21,7 +21,7 @@ export const Posts = () => {
 							likedByUser,
 							createdAt,
 						}) => (
-							<Card
+							<Cards
 								key={id}
 								avatarUrl={author.avatarUrl ?? ''}
 								content={content}

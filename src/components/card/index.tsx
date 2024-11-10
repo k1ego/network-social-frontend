@@ -45,7 +45,7 @@ type Props = {
 	likedByUser?: boolean;
 };
 
-export const Card: React.FC<Props> = ({
+export const Cards: React.FC<Props> = ({
 	avatarUrl = '',
 	name = '',
 	authorId = '',

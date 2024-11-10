@@ -23,9 +23,12 @@ import { BASE_URL } from '../../constants';
 import { resetUser, selectCurrentUser } from '../../features/user/userSlice';
 import { formatToClientDate } from '../../utils/format-to-client-date';
 import { EditProfile } from '../../components/edit-profile';
+import { useGetAllPostsQuery } from '../../app/services/postsApi';
+import { Cards } from '../../components/card';
 
 export const UserProfile = () => {
 	const { id } = useParams<{ id: string }>();
+	const { data: posts } = useGetAllPostsQuery();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const currentUser = useSelector(selectCurrentUser);
 	const { data } = useGetUserByIdQuery(id ?? '');
@@ -119,6 +122,36 @@ export const UserProfile = () => {
 				</Card>
 			</div>
 			<EditProfile isOpen={isOpen} onClose={handleClose} user={data} />
+			<div className="mt-4">
+			{posts && posts.length > 0 
+				? posts.map(
+						({
+							content,
+							author,
+							id,
+							authorId,
+							comments,
+							likes,
+							likedByUser,
+							createdAt,
+						}) => ( authorId === currentUser?.id &&
+							<Cards
+								key={id}
+								avatarUrl={author.avatarUrl ?? ''}
+								content={content}
+								name={author.name ?? ''}
+								authorId={authorId}
+								id={id}
+								commentsCount={comments.length}
+								likeCount={likes.length}
+								likedByUser={likedByUser}
+								createdAt={createdAt}
+								cardFor='post'
+							/>
+						)
+					)
+				: null}
+			</div>
 		</>
 	);
 };
