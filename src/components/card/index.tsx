@@ -6,10 +6,10 @@ import {
 	CardHeader,
 	Card as NextUiCard,
 	Spinner,
-	Button,
 } from '@nextui-org/react';
 import { FaRegComment } from 'react-icons/fa';
 import { FcDislike } from 'react-icons/fc';
+import { GoPaperclip } from 'react-icons/go';
 import { MdOutlineFavoriteBorder } from 'react-icons/md';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
@@ -21,9 +21,9 @@ import {
 } from '../../app/services/likesApi';
 import {
 	useDeletePostMutation,
+	useGetPostFileQuery,
 	useLazyGetAllPostsQuery,
 	useLazyGetPostByIdQuery,
-	useGetPostFileQuery, // Импортируем хук для получения файла
 } from '../../app/services/postsApi';
 import { selectCurrentUser } from '../../features/user/userSlice';
 import { formatToClientDate } from '../../utils/format-to-client-date';
@@ -71,7 +71,11 @@ export const Cards: React.FC<Props> = ({
 	const currentUser = useSelector(selectCurrentUser);
 
 	// Запрос на получение файла
-	const { data: fileBlob, isLoading: fileLoading, refetch } = useGetPostFileQuery(id!, { skip: !id });
+	const {
+		data: fileBlob,
+		isLoading: fileLoading,
+		refetch,
+	} = useGetPostFileQuery(id!, { skip: !id });
 
 	// Функция для скачивания файла
 	const handleDownloadFile = () => {
@@ -158,9 +162,7 @@ export const Cards: React.FC<Props> = ({
 						name={name}
 						className='text-small font-semibold leading-non text-default-600'
 						avatarUrl={avatarUrl}
-						description={
-							createdAt && formatToClientDate(createdAt)
-						}
+						description={createdAt && formatToClientDate(createdAt)}
 					/>
 				</Link>
 				{authorId === currentUser?.id && (
@@ -173,19 +175,19 @@ export const Cards: React.FC<Props> = ({
 					</div>
 				)}
 			</CardHeader>
-			<CardBody className='px-3 py-2 mb-5'>
+			{/* Иконка скрепки для скачивания файла */}
+			{fileBlob && (
+				<div
+					onClick={handleDownloadFile}
+					className='cursor-pointer flex items-center gap-1 text-blue-500 hover:text-blue-700'
+					title='Скачать файл'
+				>
+					<GoPaperclip size={20} />
+					<span className='text-sm'>Скачать файл</span>
+				</div>
+			)}
+			<CardBody className='px-3 py-5 mb-5'>
 				<Typography>{content}</Typography>
-				{/* Кнопка для скачивания файла */}
-				{id && (
-					<Button
-						onClick={handleDownloadFile}
-						isLoading={fileLoading}
-						color='primary'
-						size='sm'
-					>
-						{fileLoading ? 'Загрузка...' : 'Скачать файл'}
-					</Button>
-				)}
 			</CardBody>
 			{cardFor !== 'comment' && (
 				<CardFooter className='gap-3'>
