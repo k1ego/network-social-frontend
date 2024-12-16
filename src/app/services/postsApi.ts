@@ -3,11 +3,11 @@ import { api } from "./api";
 
 export const postApi = api.injectEndpoints({
 	endpoints: builder => ({
-		createPost: builder.mutation<Post, { content: string }>({
-			query: (postData) => ({
-				url: "/posts",
-				method: "POST",
-				body: postData,
+		createPost: builder.mutation<void, FormData>({
+			query: (formData) => ({
+				url: '/posts',
+				method: 'POST',
+				body: formData,
 			}),
 		}),
 		getAllPosts: builder.query<Post[], void>({
@@ -27,14 +27,23 @@ export const postApi = api.injectEndpoints({
 				url: `/posts/${id}`,
 				method: "DELETE",
 			}),
-		})
+		}),
+		getPostFile: builder.query<Blob, string>({
+			query: (id) => ({
+					url: `/posts/${id}/file`,
+					method: "GET",
+					responseHandler: (response) => response.blob(), // Получаем файл как Blob
+			}),
+	}),
 	}),
 });
+
 
 export const {
 	useCreatePostMutation,
 	useGetAllPostsQuery,
 	useGetPostByIdQuery,
+	useGetPostFileQuery,
 	useDeletePostMutation,
 	useLazyGetAllPostsQuery,
 	useLazyGetPostByIdQuery,

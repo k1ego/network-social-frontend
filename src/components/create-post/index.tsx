@@ -1,4 +1,4 @@
-import { Button, Textarea } from '@nextui-org/react';
+import { Button, Textarea, Input } from '@nextui-org/react';
 import { Controller, useForm } from 'react-hook-form';
 import { IoMdCreate } from 'react-icons/io';
 import {
@@ -6,10 +6,12 @@ import {
 	useLazyGetAllPostsQuery,
 } from '../../app/services/postsApi';
 import { ErrorMessage } from '../error-message';
+import { useState } from 'react';
 
 export const CreatePost = () => {
 	const [createPost] = useCreatePostMutation();
 	const [triggerAllPosts] = useLazyGetAllPostsQuery();
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	const {
 		handleSubmit,
@@ -20,10 +22,24 @@ export const CreatePost = () => {
 
 	const error = errors?.post?.message as string;
 
+	// Обработчик для выбора файла
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setSelectedFile(e.target.files[0]);
+		}
+	};
+
 	const onSubmit = handleSubmit(async data => {
 		try {
-			await createPost({ content: data.post }).unwrap();
+			const formData = new FormData();
+			formData.append('content', data.post);
+			if (selectedFile) {
+				formData.append('file', selectedFile); // Добавляем файл
+			}
+
+			await createPost(formData).unwrap();
 			setValue('post', '');
+			setSelectedFile(null); // Сбрасываем выбранный файл
 			await triggerAllPosts().unwrap();
 		} catch (error) {
 			console.log(error);
@@ -45,6 +61,13 @@ export const CreatePost = () => {
 						className='mb-5'
 					/>
 				)}
+			/>
+
+			{/* Поле для загрузки файла */}
+			<Input
+				type='file'
+				onChange={handleFileChange}
+				className='mb-5'
 			/>
 
 			{errors && <ErrorMessage error={error} />}

@@ -6,6 +6,7 @@ import {
 	CardHeader,
 	Card as NextUiCard,
 	Spinner,
+	Button,
 } from '@nextui-org/react';
 import { FaRegComment } from 'react-icons/fa';
 import { FcDislike } from 'react-icons/fc';
@@ -22,6 +23,7 @@ import {
 	useDeletePostMutation,
 	useLazyGetAllPostsQuery,
 	useLazyGetPostByIdQuery,
+	useGetPostFileQuery, // Импортируем хук для получения файла
 } from '../../app/services/postsApi';
 import { selectCurrentUser } from '../../features/user/userSlice';
 import { formatToClientDate } from '../../utils/format-to-client-date';
@@ -68,7 +70,21 @@ export const Cards: React.FC<Props> = ({
 	const navigate = useNavigate();
 	const currentUser = useSelector(selectCurrentUser);
 
-	// Функция для перезапроса данных из места удаления
+	// Запрос на получение файла
+	const { data: fileBlob, isLoading: fileLoading, refetch } = useGetPostFileQuery(id!, { skip: !id });
+
+	// Функция для скачивания файла
+	const handleDownloadFile = () => {
+		if (fileBlob) {
+			const url = window.URL.createObjectURL(fileBlob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'attached-file'; // Название файла по умолчанию
+			a.click();
+			window.URL.revokeObjectURL(url);
+		}
+	};
+
 	const refetchPosts = async () => {
 		switch (cardFor) {
 			case 'post':
@@ -91,14 +107,13 @@ export const Cards: React.FC<Props> = ({
 				? await unlikePost(id).unwrap()
 				: await likePost({ postId: id }).unwrap();
 
-				if (cardFor === 'currentPost') {
-					await triggerGetPostById(id).unwrap();
-				}
+			if (cardFor === 'currentPost') {
+				await triggerGetPostById(id).unwrap();
+			}
 
-				if (cardFor === 'post') {
-					await triggerGetAllPosts().unwrap();
-				}
-				
+			if (cardFor === 'post') {
+				await triggerGetAllPosts().unwrap();
+			}
 		} catch (error) {
 			if (hasErrorField(error)) {
 				setError(error.data.error);
@@ -160,6 +175,17 @@ export const Cards: React.FC<Props> = ({
 			</CardHeader>
 			<CardBody className='px-3 py-2 mb-5'>
 				<Typography>{content}</Typography>
+				{/* Кнопка для скачивания файла */}
+				{id && (
+					<Button
+						onClick={handleDownloadFile}
+						isLoading={fileLoading}
+						color='primary'
+						size='sm'
+					>
+						{fileLoading ? 'Загрузка...' : 'Скачать файл'}
+					</Button>
+				)}
 			</CardBody>
 			{cardFor !== 'comment' && (
 				<CardFooter className='gap-3'>
